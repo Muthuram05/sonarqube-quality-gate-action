@@ -58,8 +58,9 @@ until [[ ${status} != "PENDING" && ${status} != "IN_PROGRESS" || ${SECONDS} -ge 
     printf '.'
     sleep 5
     task="$(curl --location --location-trusted --max-redirs 10 --silent --fail --show-error --user "${SONAR_TOKEN}": "${ceTaskUrl}")"
+    echo "inside 1"
     echo $task
-    echo "inside"
+    echo "inside 2"
     status="$(jq -r '.task.status' <<< "$task")"
 done
 printf '\n'
@@ -73,10 +74,15 @@ if [[ ${status} == "PENDING" || ${status} == "IN_PROGRESS" ]] && [[ ${SECONDS} -
 fi
 
 analysisId="$(jq -r '.task.analysisId' <<< "${task}")"
+
+echo $analysisId
+echo "1st"
 qualityGateUrl="${serverUrl}/api/qualitygates/project_status?analysisId=${analysisId}"
 qualityGateStatus="$(curl --location --location-trusted --max-redirs 10 --silent --fail --show-error --user "${SONAR_TOKEN}": "${qualityGateUrl}" | jq -r '.projectStatus.status')"
 
 echo $analysisId
+echo "2nd"
+echo $qualityGateUrl
 
 dashboardUrl="$(sed -n 's/dashboardUrl=\(.*\)/\1/p' "${metadataFile}")"
 analysisResultMsg="Detailed information can be found at: ${dashboardUrl}\n"
