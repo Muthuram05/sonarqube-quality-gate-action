@@ -48,6 +48,9 @@ fi
 task="$(curl --location --location-trusted --max-redirs 10  --silent --fail --show-error --user "${SONAR_TOKEN}": "${ceTaskUrl}")"
 status="$(jq -r '.task.status' <<< "$task")"
 
+echo $task 
+echo $status
+
 endTime=$(( ${SECONDS} + ${pollingTimeoutSec} ))
 
 until [[ ${status} != "PENDING" && ${status} != "IN_PROGRESS" || ${SECONDS} -ge ${endTime} ]]; do
@@ -58,6 +61,9 @@ until [[ ${status} != "PENDING" && ${status} != "IN_PROGRESS" || ${SECONDS} -ge 
 done
 printf '\n'
 
+echo $task 
+echo $status
+
 if [[ ${status} == "PENDING" || ${status} == "IN_PROGRESS" ]] && [[ ${SECONDS} -ge ${endTime} ]]; then
     echo "Polling timeout reached for waiting for finishing of the Sonar scan! Aborting the check for SonarQube's Quality Gate."
     exit 1
@@ -66,6 +72,8 @@ fi
 analysisId="$(jq -r '.task.analysisId' <<< "${task}")"
 qualityGateUrl="${serverUrl}/api/qualitygates/project_status?analysisId=${analysisId}"
 qualityGateStatus="$(curl --location --location-trusted --max-redirs 10 --silent --fail --show-error --user "${SONAR_TOKEN}": "${qualityGateUrl}" | jq -r '.projectStatus.status')"
+
+echo $analysisId
 
 dashboardUrl="$(sed -n 's/dashboardUrl=\(.*\)/\1/p' "${metadataFile}")"
 analysisResultMsg="Detailed information can be found at: ${dashboardUrl}\n"
