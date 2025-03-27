@@ -12,15 +12,6 @@ pollingTimeoutSec="$2"
 
 echo $metadataFile
 
-echo "Reading the file line by line:"
-while IFS= read -r line
-do
-  echo "$line"
-done < "$metadataFile"
-
-echo "Contents of the file:"
-cat "$metadataFile"
-
 if [[ ! -f "$metadataFile" ]]; then
    echo "$metadataFile does not exist."
    exit 1
