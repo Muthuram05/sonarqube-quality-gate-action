@@ -10,6 +10,7 @@ fi
 metadataFile="$1"
 pollingTimeoutSec="$2"
 
+echo $metadataFile
 
 if [[ ! -f "$metadataFile" ]]; then
    echo "$metadataFile does not exist."
@@ -28,6 +29,9 @@ else
    serverUrl="$(sed -n 's/serverUrl=\(.*\)/\1/p' "${metadataFile}")"
    ceTaskUrl="$(sed -n 's/ceTaskUrl=\(.*\)/\1/p' "${metadataFile}")"
 fi
+
+echo "Server URL: ${serverUrl}"
+echo "Task URL: ${ceTaskUrl}"
 
 if [ -z "${serverUrl}" ] || [ -z "${ceTaskUrl}" ]; then
   echo "Invalid report metadata file."
