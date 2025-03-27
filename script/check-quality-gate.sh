@@ -50,6 +50,7 @@ status="$(jq -r '.task.status' <<< "$task")"
 
 echo $task 
 echo $status
+echo "1"
 
 endTime=$(( ${SECONDS} + ${pollingTimeoutSec} ))
 
@@ -57,6 +58,8 @@ until [[ ${status} != "PENDING" && ${status} != "IN_PROGRESS" || ${SECONDS} -ge 
     printf '.'
     sleep 5
     task="$(curl --location --location-trusted --max-redirs 10 --silent --fail --show-error --user "${SONAR_TOKEN}": "${ceTaskUrl}")"
+    echo $task
+    echo "inside"
     status="$(jq -r '.task.status' <<< "$task")"
 done
 printf '\n'
